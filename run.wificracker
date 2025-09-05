@@ -1,0 +1,104 @@
+#!/data/data/com.termux/files/usr/bin/env python3
+import os, sys, time
+from datetime import datetime
+
+# Auto-install colorama if missing
+try:
+    from colorama import Fore, Style, init
+except ImportError:
+    os.system("pkg install python -y")
+    os.system("pip install --upgrade pip")
+    os.system("pip install colorama")
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+init(autoreset=True)
+RED = Fore.RED + Style.BRIGHT
+GREEN = Fore.GREEN + Style.BRIGHT
+YELLOW = Fore.YELLOW + Style.BRIGHT
+CYAN = Fore.CYAN + Style.BRIGHT
+
+def banner():
+    os.system("clear")
+    print(f"""{RED}
+██╗    ██╗██╗███████╗██╗       ██████╗██████╗  █████╗  ██████╗██╗  ██╗███████╗██████╗ 
+██║    ██║██║██╔════╝██║      ██╔════╝██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+██║ █╗ ██║██║███████╗██║      ██║     ██████╔╝███████║██║     █████╔╝ █████╗  ██████╔╝
+██║███╗██║██║╚════██║██║      ██║     ██╔═══╝ ██╔══██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+╚███╔███╔╝██║███████║███████╗╚██████╗██║     ██║  ██║╚██████╗██║  ██╗███████╗██║  ██║
+ ╚══╝╚══╝ ╚═╝╚══════╝╚══════╝ ╚═════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+{Fore.CYAN}                  >>> WiFi Cracker Simulator v2.0 <<<""")
+
+def back_to_menu():
+    choice=input(f"\n{GREEN}1) Back to Menu{Fore.RESET}\n{RED}0) Exit{Fore.RESET}\nChoose: ")
+    if choice=="0": exit()
+    menu()
+
+def wifi_scan():
+    print(f"{CYAN}[*] Scanning WiFi...{Fore.RESET}")
+    time.sleep(2)
+    for n in ["1) CoffeeShop_WiFi (WPA2)","2) MyHome_5G (WPA3)","3) FreeAirportWiFi (Open)","4) Neighbor_WiFi (WEP)"]:
+        print(n)
+    back_to_menu()
+
+def brute_force():
+    print(f"{RED}[*] Brute Force started...{Fore.RESET}")
+    for i in range(1,6): print(f"Trying password {i}"); time.sleep(1)
+    print(f"{GREEN}Password cracked: hunter123{Fore.RESET}")
+    with open("brute.log","a") as f: f.write(f"=== Log {datetime.now()} ===\nPassword: hunter123\n")
+    back_to_menu()
+
+def system_info():
+    print(f"{YELLOW}[*] System Info:{Fore.RESET}")
+    print(f"OS: {os.name}, User: {os.getenv('USER')}")
+    os.system("uname -r")
+    os.system("uptime -p")
+    back_to_menu()
+
+def pro_mode():
+    print(f"{RED}PRO MODE! Press Ctrl+C to stop.{Fore.RESET}")
+    try:
+        while True:
+            print(f"[PRO] {datetime.now()} :: Injecting packets...")
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        print("Pro Mode stopped.")
+    back_to_menu()
+
+def ddos_attack():
+    target=input("Enter target IP/URL: ")
+    print(f"{YELLOW}Simulating attack on {target}... Ctrl+C to stop{Fore.RESET}")
+    count=0
+    try:
+        while True:
+            pkt=os.urandom(1)[0]%1500+64
+            port=os.urandom(2)[0]%65535
+            line=f"[ATTACK] Sent {pkt} bytes to {target}:{port} | Total {count}"
+            print(line)
+            with open("ddos.log","a") as f: f.write(line+"\n")
+            count+=1
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        print("DDoS stopped.")
+    back_to_menu()
+
+def view_logs():
+    logs=[f for f in os.listdir() if f.endswith(".log")]
+    if logs: [print(log) for log in logs]
+    else: print("No logs found.")
+    back_to_menu()
+
+def menu():
+    banner()
+    print("1) WiFi Scan\n2) Brute Force\n3) System Info\n4) Pro Mode\n5) DDoS Attack\n9) View Logs\n0) Exit\n")
+    choice=input("Choose: ")
+    if choice=="1": wifi_scan()
+    elif choice=="2": brute_force()
+    elif choice=="3": system_info()
+    elif choice=="4": pro_mode()
+    elif choice=="5": ddos_attack()
+    elif choice=="9": view_logs()
+    elif choice=="0": exit()
+    else: print("Invalid choice!"); time.sleep(1); menu()
+
+if __name__=="__main__":
+    menu()
