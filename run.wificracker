@@ -1,6 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/env python3
 import os, sys, time, random
 from datetime import datetime
+import string
 
 # Auto-install colorama if missing
 try:
@@ -27,7 +28,8 @@ def generate_wifi_networks(count=5):
     for _ in range(count):
         name = f"{random.choice(wifi_prefixes)}{random.randint(1,99)}_{random.choice(wifi_suffixes)}"
         sec = random.choice(wifi_security)
-        networks.append(f"{name} {sec}")
+        signal = random.randint(1,100)  # Signal strength
+        networks.append(f"{name} {sec} [Signal: {signal}%]")
     return networks
 
 # Random username and password lists
@@ -62,7 +64,6 @@ def wifi_scan():
     back_to_menu()
 
 def brute_force():
-    # Always generate a fresh WiFi list
     networks = generate_wifi_networks()
     print(f"{CYAN}[*] Available WiFi Networks:{Fore.RESET}")
     for idx, net in enumerate(networks):
@@ -85,6 +86,37 @@ def brute_force():
     print(f"{GREEN}Password cracked! Username: {user}, Password: {pwd}{Fore.RESET}")
     with open("brute.log","a") as f:
         f.write(f"=== Brute Force Log {datetime.now()} ===\nTarget: {target_name}\nUsername: {user}\nPassword: {pwd}\n")
+    back_to_menu()
+
+def password_generator():
+    print(f"{CYAN}[*] Password Generator Tool{Fore.RESET}")
+    length = input("Enter password length (default 12): ")
+    try:
+        length = int(length)
+    except:
+        length = 12
+    chars = string.ascii_letters + string.digits + "!@#$%^&*()"
+    pwd = "".join(random.choice(chars) for _ in range(length))
+    print(f"{GREEN}Generated Password: {pwd}{Fore.RESET}")
+    back_to_menu()
+
+def quick_connect():
+    networks = generate_wifi_networks()
+    print(f"{CYAN}[*] Available WiFi Networks:{Fore.RESET}")
+    for idx, net in enumerate(networks):
+        print(f"{idx+1}) {net}")
+    target = input(f"\n{YELLOW}Enter the number of the WiFi to connect: {Fore.RESET}")
+    try:
+        target_index = int(target)-1
+        target_name = networks[target_index]
+    except:
+        print(f"{RED}Invalid input!{Fore.RESET}")
+        back_to_menu()
+    print(f"{GREEN}Connecting to {target_name}...{Fore.RESET}")
+    for i in range(3):
+        print(".")
+        time.sleep(0.7)
+    print(f"{GREEN}Connected successfully!{Fore.RESET}")
     back_to_menu()
 
 def system_info():
@@ -132,14 +164,16 @@ def view_logs():
 
 def menu():
     banner()
-    print("1) WiFi Scan\n2) Brute Force\n3) System Info\n4) Pro Mode\n5) DDoS Attack\n9) View Logs\n0) Exit\n")
+    print("1) WiFi Scan\n2) Brute Force\n3) Password Generator\n4) Quick Connect\n5) System Info\n6) Pro Mode\n7) DDoS Attack\n8) View Logs\n0) Exit\n")
     choice = input("Choose: ")
     if choice=="1": wifi_scan()
     elif choice=="2": brute_force()
-    elif choice=="3": system_info()
-    elif choice=="4": pro_mode()
-    elif choice=="5": ddos_attack()
-    elif choice=="9": view_logs()
+    elif choice=="3": password_generator()
+    elif choice=="4": quick_connect()
+    elif choice=="5": system_info()
+    elif choice=="6": pro_mode()
+    elif choice=="7": ddos_attack()
+    elif choice=="8": view_logs()
     elif choice=="0": exit()
     else: print("Invalid choice!"); time.sleep(1); menu()
 
