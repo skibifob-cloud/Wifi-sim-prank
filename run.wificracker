@@ -1,0 +1,160 @@
+#!/usr/bin/env python3
+import os
+import sys
+import time
+from datetime import datetime
+
+# --- Auto-install dependencies ---
+try:
+    from colorama import Fore, Style, init
+except ImportError:
+    print("[*] Installing missing Python modules...")
+    os.system("pkg install python -y")  # Ensure python is installed
+    os.system("pip install colorama")
+    os.execv(sys.executable, [sys.executable] + sys.argv)  # Restart script
+
+# Initialize colorama
+init(autoreset=True)
+RED = Fore.RED + Style.BRIGHT
+GREEN = Fore.GREEN + Style.BRIGHT
+YELLOW = Fore.YELLOW + Style.BRIGHT
+CYAN = Fore.CYAN + Style.BRIGHT
+RESET = Style.RESET_ALL
+
+# --- Banner ---
+def banner():
+    os.system("clear")
+    print(f"""{RED}
+██╗    ██╗██╗███████╗██╗       ██████╗██████╗  █████╗  ██████╗██╗  ██╗███████╗██████╗ 
+██║    ██║██║██╔════╝██║      ██╔════╝██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+██║ █╗ ██║██║███████╗██║      ██║     ██████╔╝███████║██║     █████╔╝ █████╗  ██████╔╝
+██║███╗██║██║╚════██║██║      ██║     ██╔═══╝ ██╔══██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+╚███╔███╔╝██║███████║███████╗╚██████╗██║     ██║  ██║╚██████╗██║  ██╗███████╗██║  ██║
+ ╚══╝╚══╝ ╚═╝╚══════╝╚══════╝ ╚═════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+{RESET}""")
+    print(f"{CYAN}                  >>> WiFi Cracker Simulator v2.0 <<<{RESET}\n")
+
+# --- WiFi Scan ---
+def wifi_scan():
+    print(f"{CYAN}[*] Scanning for nearby WiFi networks...{RESET}")
+    time.sleep(2)
+    print(f"{YELLOW}Found networks:{RESET}")
+    networks = ["1) CoffeeShop_WiFi (WPA2)",
+                "2) MyHome_5G (WPA3)",
+                "3) FreeAirportWiFi (Open)",
+                "4) Neighbor_WiFi (WEP)"]
+    for n in networks:
+        print(n)
+    back_to_menu()
+
+# --- Brute Force ---
+def brute_force():
+    print(f"{RED}[*] Starting brute force on target WiFi...{RESET}")
+    time.sleep(2)
+    for i in range(1, 6):
+        print(f"Trying password attempt {i}...")
+        time.sleep(1)
+    print(f"{GREEN}Password cracked: hunter123{RESET}")
+    with open("brute.log", "a") as f:
+        f.write(f"=== Brute Force Log {datetime.now()} ===\nPassword cracked: hunter123\n")
+    back_to_menu()
+
+# --- System Info ---
+def system_info():
+    print(f"{YELLOW}[*] Gathering system info...{RESET}")
+    print(f"OS: {os.name}")
+    print(f"User: {os.getenv('USER')}")
+    os.system("uname -r")
+    os.system("uptime -p")
+    back_to_menu()
+
+# --- Pro Mode ---
+def pro_mode():
+    print(f"{RED}!!! WARNING: PRO MODE ACTIVATED !!!{RESET}")
+    print("Generating high-intensity logs... (Press Ctrl+C to stop)")
+    with open("pro.log", "a") as f:
+        f.write(f"=== Pro Mode Log {datetime.now()} ===\n")
+    try:
+        while True:
+            print(f"[PRO] {datetime.now()} :: Injecting packets...")
+            with open("pro.log", "a") as f:
+                f.write(f"[PRO] {datetime.now()} :: Injecting packets...\n")
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        print("Pro Mode stopped.")
+    back_to_menu()
+
+# --- DDoS Attack (simulated) ---
+def ddos_attack():
+    os.system("clear")
+    print(f"{RED}[*] Starting DDoS attack...{RESET}\n")
+    target = input("Enter target IP or URL: ")
+    print(f"{YELLOW}[*] Launching flood on {target} ... Press Ctrl+C to stop.{RESET}")
+    count = 0
+    try:
+        while True:
+            packet_size = os.urandom(1)[0] % 1500 + 64
+            port = os.urandom(2)[0] % 65535
+            line = f"[ATTACK] Sent {packet_size} bytes to {target}:{port} | Total packets: {count}"
+            print(line)
+            with open("ddos.log", "a") as f:
+                f.write(line + "\n")
+            count += 1
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        print("DDoS Simulation stopped.")
+    back_to_menu()
+
+# --- View Logs ---
+def view_logs():
+    print(f"{CYAN}[*] Available logs:{RESET}")
+    logs = [f for f in os.listdir() if f.endswith(".log")]
+    if logs:
+        for log in logs:
+            print(log)
+    else:
+        print("No logs found.")
+    back_to_menu()
+
+# --- Back to Menu ---
+def back_to_menu():
+    print(f"\n{GREEN}1) Back to Menu{RESET}")
+    print(f"{RED}0) Exit{RESET}")
+    choice = input("Choose: ")
+    if choice == "0":
+        exit()
+    menu()
+
+# --- Menu ---
+def menu():
+    banner()
+    print("1) WiFi Scan")
+    print("2) Brute Force")
+    print("3) System Info")
+    print("4) Pro Mode")
+    print("5) DDoS Attack")
+    print("9) View Saved Logs")
+    print("0) Exit\n")
+    choice = input("Choose an option: ")
+    if choice == "1":
+        wifi_scan()
+    elif choice == "2":
+        brute_force()
+    elif choice == "3":
+        system_info()
+    elif choice == "4":
+        pro_mode()
+    elif choice == "5":
+        ddos_attack()
+    elif choice == "9":
+        view_logs()
+    elif choice == "0":
+        exit()
+    else:
+        print("Invalid choice!")
+        time.sleep(1)
+        menu()
+
+# --- Start Program ---
+if __name__ == "__main__":
+    menu()
