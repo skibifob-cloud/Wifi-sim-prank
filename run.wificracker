@@ -204,4 +204,56 @@ def normal_menu():
         "7": ddos_attack,
         "8": matrix_hack,
         "9": clear_logs,
-        "
+        "10": ip_checker,
+        "0": exit
+    }
+    actions.get(choice, lambda x: print(f"{Fore.RED}Invalid!{Fore.RESET}"))(normal_menu)
+
+def owner_menu():
+    random_banner()
+    print("=== OWNER MENU ===")
+    print("1) WiFi Scan")
+    print("2) Brute Force")
+    print("3) Password Generator")
+    print("4) Quick Connect")
+    print("5) System Info")
+    print("6) Pro Mode")
+    print("7) DDoS Attack")
+    print("8) Matrix Hack")
+    print("9) Clear Logs")
+    print("10) IP Checker")
+    print("11) Owner") # Owner-only feature
+    print("0) Exit")
+    choice = input("Choose: ")
+    actions = {
+        "1": wifi_scan,
+        "2": brute_force,
+        "3": password_generator,
+        "4": quick_connect,
+        "5": system_info,
+        "6": pro_mode,
+        "7": ddos_attack,
+        "8": matrix_hack,
+        "9": clear_logs,
+        "10": ip_checker,
+        "11": owner_only,
+        "0": exit
+    }
+    actions.get(choice, lambda x: print(f"{Fore.RED}Invalid!{Fore.RESET}"))(owner_menu)
+
+# ------------------ Login ------------------
+def login():
+    global is_owner
+    random_banner()
+    pwd = input("Enter password: ")
+    if pwd == OWNER_PASSWORD:
+        is_owner = True
+        owner_menu()
+    elif pwd == NORMAL_PASSWORD:
+        normal_menu()
+    else:
+        print(f"{Fore.RED}Wrong password!{Fore.RESET}")
+        sys.exit()
+
+if __name__=="__main__":
+    login()
