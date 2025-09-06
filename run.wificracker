@@ -1,9 +1,8 @@
 #!/data/data/com.termux/files/usr/bin/env python3
-import os, sys, time, random
+import os, sys, time, random, string
 from datetime import datetime
-import string
 
-# Auto-install colorama if missing
+# ------------------ SETUP ------------------
 try:
     from colorama import Fore, Style, init
 except ImportError:
@@ -21,16 +20,18 @@ MAGENTA = Fore.MAGENTA + Style.BRIGHT
 BLUE = Fore.BLUE + Style.BRIGHT
 banner_colors = [RED, GREEN, YELLOW, CYAN, MAGENTA, BLUE]
 
-# Owner password
+# ------------------ PASSWORDS ------------------
 owner_password = "aliponly1"
+normal_password = "freeuser1234"
 
-# Random WiFi and user/password generators
+# ------------------ WiFi & Users ------------------
 wifi_prefixes = ["Coffee","Home","Free","Guest","Office","Airport","Neighbor","Shop","Net"]
 wifi_suffixes = ["WiFi","Network","Hotspot","Link","Net","Zone"]
 wifi_security = ["(WPA2)","(WPA3)","(Open)","(WEP)"]
 usernames = ["admin","guest","user","root","test","wifi"]
 passwords = ["hunter123","password","12345678","letmein","qwerty","ilovecoding"]
 
+# ------------------ HELPERS ------------------
 def generate_wifi_networks(count=5):
     networks=[]
     for _ in range(count):
@@ -66,7 +67,7 @@ def wifi_scan():
     time.sleep(1)
     for i, net in enumerate(networks):
         print(f"{i+1}) {net}")
-    back_to_menu(normal_menu if not is_owner else owner_menu)
+    back_to_menu(owner_menu if is_owner else normal_menu)
 
 def brute_force():
     networks = generate_wifi_networks()
@@ -77,7 +78,8 @@ def brute_force():
         choice=int(input(f"{YELLOW}Choose WiFi: {Fore.RESET}"))-1
         target=networks[choice]
     except:
-        print(f"{RED}Invalid!{Fore.RESET}"); back_to_menu(normal_menu if not is_owner else owner_menu)
+        print(f"{RED}Invalid!{Fore.RESET}")
+        back_to_menu(owner_menu if is_owner else normal_menu)
     user=random.choice(usernames)
     pwd=random.choice(passwords)
     for i in range(1,6):
@@ -86,22 +88,86 @@ def brute_force():
     print(f"{GREEN}Password cracked! Username: {user}, Password: {pwd}{Fore.RESET}")
     with open("brute.log","a") as f:
         f.write(f"=== Brute Force Log {datetime.now()} ===\nTarget: {target}\nUsername: {user}\nPassword: {pwd}\n")
-    back_to_menu(normal_menu if not is_owner else owner_menu)
+    back_to_menu(owner_menu if is_owner else normal_menu)
 
 def system_info():
     print(f"{YELLOW}[*] System Info:{Fore.RESET}")
     print(f"OS: {os.name}, User: {os.getenv('USER')}")
     os.system("uname -r")
     os.system("uptime -p")
-    back_to_menu(normal_menu if not is_owner else owner_menu)
+    back_to_menu(owner_menu if is_owner else normal_menu)
 
-def owner_change_password():
-    global owner_password
-    owner_password=input("Enter new owner password: ")
-    print(f"{GREEN}Owner password changed!{Fore.RESET}")
+def pro_mode():
+    print(f"{RED}PRO MODE! Press Ctrl+C to stop.{Fore.RESET}")
+    try:
+        while True:
+            print(f"[PRO] {datetime.now()} :: Injecting packets...")
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        print("Pro Mode stopped.")
+    back_to_menu(owner_menu if is_owner else normal_menu)
+
+def ddos_attack():
+    target = input("Enter target IP/URL: ")
+    print(f"{YELLOW}Simulating attack on {target}... Ctrl+C to stop{Fore.RESET}")
+    count=0
+    try:
+        while True:
+            pkt=random.randint(64,1500)
+            port=random.randint(1,65535)
+            line=f"[ATTACK] Sent {pkt} bytes to {target}:{port} | Total {count}"
+            print(line)
+            with open("ddos.log","a") as f: f.write(line+"\n")
+            count+=1
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        print("DDoS stopped.")
+    back_to_menu(owner_menu if is_owner else normal_menu)
+
+def password_generator():
+    length=input("Password length (default 12): ")
+    try: length=int(length)
+    except: length=12
+    chars=string.ascii_letters+string.digits+"!@#$%^&*()"
+    pwd="".join(random.choice(chars) for _ in range(length))
+    print(f"{GREEN}Generated Password: {pwd}{Fore.RESET}")
+    back_to_menu(owner_menu if is_owner else normal_menu)
+
+def quick_connect():
+    networks=generate_wifi_networks()
+    for i, net in enumerate(networks): print(f"{i+1}) {net}")
+    try:
+        choice=int(input(f"{YELLOW}Choose WiFi to connect: {Fore.RESET}"))-1
+        target=networks[choice]
+    except: 
+        print(f"{RED}Invalid!{Fore.RESET}"); back_to_menu(owner_menu if is_owner else normal_menu)
+    print(f"{GREEN}Connecting to {target}...{Fore.RESET}")
+    for _ in range(3): print("."); time.sleep(0.7)
+    print(f"{GREEN}Connected!{Fore.RESET}")
+    back_to_menu(owner_menu if is_owner else normal_menu)
+
+def view_logs():
+    logs=[f for f in os.listdir() if f.endswith(".log")]
+    if logs: print(*logs,sep="\n")
+    else: print("No logs found.")
+    back_to_menu(owner_menu if is_owner else normal_menu)
+
+# ------------------ OWNER MENU FEATURES ------------------
+def random_hack_simulation():
+    targets = ["NASA Mainframe", "Bank Server", "Secret Lab", "CIA Database", "Tech Giant Cloud"]
+    actions = ["Injecting virus", "Bypassing firewall", "Decrypting passwords", "Downloading secret files", "Overloading server"]
+    target = random.choice(targets)
+    print(f"{CYAN}[*] Starting random hack on {target}...{Fore.RESET}")
+    for i in range(1, 6):
+        action = random.choice(actions)
+        print(f"[{datetime.now()}] {action}... ({i*20}%)")
+        time.sleep(0.8)
+    print(f"{GREEN}Hack simulation complete! Target: {target}{Fore.RESET}")
+    with open("owner_random.log", "a") as f:
+        f.write(f"{datetime.now()} :: Hack simulated on {target}\n")
     back_to_menu(owner_menu)
 
-def owner_clear_logs():
+def clear_logs():
     logs=[f for f in os.listdir() if f.endswith(".log")]
     for log in logs: os.remove(log)
     print(f"{GREEN}All logs cleared!{Fore.RESET}")
@@ -110,24 +176,34 @@ def owner_clear_logs():
 # ------------------ MENUS ------------------
 def normal_menu():
     banner()
-    print("1) WiFi Scan\n2) Brute Force\n3) System Info\n0) Exit")
+    print("1) WiFi Scan\n2) Brute Force\n3) Password Generator\n4) Quick Connect\n5) System Info\n6) Pro Mode\n7) DDoS Attack\n8) View Logs\n0) Exit")
     choice=input(f"{YELLOW}Choose: {Fore.RESET}")
     if choice=="1": wifi_scan()
     elif choice=="2": brute_force()
-    elif choice=="3": system_info()
+    elif choice=="3": password_generator()
+    elif choice=="4": quick_connect()
+    elif choice=="5": system_info()
+    elif choice=="6": pro_mode()
+    elif choice=="7": ddos_attack()
+    elif choice=="8": view_logs()
     elif choice=="0": exit()
     else: print(f"{RED}Invalid!{Fore.RESET}"); time.sleep(1); normal_menu()
 
 def owner_menu():
     banner()
     print("=== OWNER MENU ===")
-    print("1) WiFi Scan\n2) Brute Force\n3) System Info\n4) Change Owner Password\n5) Clear Logs\n0) Exit")
+    print("1) WiFi Scan\n2) Brute Force\n3) Password Generator\n4) Quick Connect\n5) System Info\n6) Pro Mode\n7) DDoS Attack\n8) View Logs\n9) Random Hack Simulation\n10) Clear Logs\n0) Exit")
     choice=input(f"{YELLOW}Choose: {Fore.RESET}")
     if choice=="1": wifi_scan()
     elif choice=="2": brute_force()
-    elif choice=="3": system_info()
-    elif choice=="4": owner_change_password()
-    elif choice=="5": owner_clear_logs()
+    elif choice=="3": password_generator()
+    elif choice=="4": quick_connect()
+    elif choice=="5": system_info()
+    elif choice=="6": pro_mode()
+    elif choice=="7": ddos_attack()
+    elif choice=="8": view_logs()
+    elif choice=="9": random_hack_simulation()
+    elif choice=="10": clear_logs()
     elif choice=="0": exit()
     else: print(f"{RED}Invalid!{Fore.RESET}"); time.sleep(1); owner_menu()
 
@@ -135,6 +211,6 @@ def owner_menu():
 is_owner=False
 banner()
 pwd=input(f"{YELLOW}Enter password: {Fore.RESET}")
-if pwd=="freeuser1234": is_owner=False; normal_menu()
+if pwd==normal_password: is_owner=False; normal_menu()
 elif pwd==owner_password: is_owner=True; owner_menu()
 else: print(f"{RED}Wrong password!{Fore.RESET}"); time.sleep(2); sys.exit()
