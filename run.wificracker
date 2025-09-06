@@ -17,165 +17,124 @@ RED = Fore.RED + Style.BRIGHT
 GREEN = Fore.GREEN + Style.BRIGHT
 YELLOW = Fore.YELLOW + Style.BRIGHT
 CYAN = Fore.CYAN + Style.BRIGHT
+MAGENTA = Fore.MAGENTA + Style.BRIGHT
+BLUE = Fore.BLUE + Style.BRIGHT
+banner_colors = [RED, GREEN, YELLOW, CYAN, MAGENTA, BLUE]
 
-# WiFi name generator
-wifi_prefixes = ["Coffee", "Home", "Free", "Guest", "Office", "Airport", "Neighbor", "Shop", "Net"]
-wifi_suffixes = ["WiFi", "Network", "Hotspot", "Link", "Net", "Zone"]
-wifi_security = ["(WPA2)", "(WPA3)", "(Open)", "(WEP)"]
+# Owner password
+owner_password = "aliponly1"
+
+# Random WiFi and user/password generators
+wifi_prefixes = ["Coffee","Home","Free","Guest","Office","Airport","Neighbor","Shop","Net"]
+wifi_suffixes = ["WiFi","Network","Hotspot","Link","Net","Zone"]
+wifi_security = ["(WPA2)","(WPA3)","(Open)","(WEP)"]
+usernames = ["admin","guest","user","root","test","wifi"]
+passwords = ["hunter123","password","12345678","letmein","qwerty","ilovecoding"]
 
 def generate_wifi_networks(count=5):
-    networks = []
+    networks=[]
     for _ in range(count):
-        name = f"{random.choice(wifi_prefixes)}{random.randint(1,99)}_{random.choice(wifi_suffixes)}"
-        sec = random.choice(wifi_security)
-        signal = random.randint(1,100)  # Signal strength
+        name=f"{random.choice(wifi_prefixes)}{random.randint(1,99)}_{random.choice(wifi_suffixes)}"
+        sec=random.choice(wifi_security)
+        signal=random.randint(1,100)
         networks.append(f"{name} {sec} [Signal: {signal}%]")
     return networks
 
-# Random username and password lists
-usernames = ["admin", "guest", "user", "root", "test", "wifi"]
-passwords = ["hunter123", "password", "12345678", "letmein", "qwerty", "ilovecoding"]
-
 def banner():
     os.system("clear")
-    print(f"""{RED}
-██╗    ██╗██╗███████╗██╗       ██████╗██████╗  █████╗  ██████╗██╗  ██╗███████╗██████╗ 
-██║    ██║██║██╔════╝██║      ██╔════╝██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
-██║ █╗ ██║██║███████╗██║      ██║     ██████╔╝███████║██║     █████╔╝ █████╗  ██████╔╝
-██║███╗██║██║╚════██║██║      ██║     ██╔═══╝ ██╔══██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
-╚███╔███╔╝██║███████║███████╗╚██████╗██║     ██║  ██║╚██████╗██║  ██╗███████╗██║  ██║
- ╚══╝╚══╝ ╚═╝╚══════╝╚══════╝ ╚═════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-{Fore.CYAN}                  >>> Hacker Tools <<<{Fore.RESET}
+    color = random.choice(banner_colors)
+    print(f"""{color}
+__        __   _                            _         
+\ \      / /__| | ___ ___  _ __ ___   ___  | |_ ___   
+ \ \ /\ / / _ \ |/ __/ _ \| '_ ` _ \ / _ \ | __/ _ \  
+  \ V  V /  __/ | (_| (_) | | | | | |  __/ | || (_) | 
+   \_/\_/ \___|_|\___\___/|_| |_| |_|\___|  \__\___/  
+                                                      
+{Fore.CYAN}                  >>> HACKING TOOLS <<<{Fore.RESET}
                    Made by Alip
 """)
 
-def back_to_menu():
+def back_to_menu(menu_func):
     choice = input(f"\n{GREEN}1) Back to Menu{Fore.RESET}\n{RED}0) Exit{Fore.RESET}\nChoose: ")
-    if choice == "0":
-        exit()
-    menu()
+    if choice=="0": exit()
+    menu_func()
 
+# ------------------ FEATURES ------------------
 def wifi_scan():
     networks = generate_wifi_networks()
     print(f"{CYAN}[*] Scanning WiFi...{Fore.RESET}")
     time.sleep(1)
-    for idx, net in enumerate(networks):
-        print(f"{idx+1}) {net}")
-    back_to_menu()
+    for i, net in enumerate(networks):
+        print(f"{i+1}) {net}")
+    back_to_menu(normal_menu if not is_owner else owner_menu)
 
 def brute_force():
     networks = generate_wifi_networks()
     print(f"{CYAN}[*] Available WiFi Networks:{Fore.RESET}")
-    for idx, net in enumerate(networks):
-        print(f"{idx+1}) {net}")
-    target = input(f"\n{YELLOW}Enter the number of the target WiFi: {Fore.RESET}")
+    for i, net in enumerate(networks):
+        print(f"{i+1}) {net}")
     try:
-        target_index = int(target)-1
-        target_name = networks[target_index]
+        choice=int(input(f"{YELLOW}Choose WiFi: {Fore.RESET}"))-1
+        target=networks[choice]
     except:
-        print(f"{RED}Invalid input!{Fore.RESET}")
-        back_to_menu()
-
-    print(f"{RED}[*] Starting brute force on {target_name}...{Fore.RESET}")
-    time.sleep(1)
-    user = random.choice(usernames)
-    pwd = random.choice(passwords)
+        print(f"{RED}Invalid!{Fore.RESET}"); back_to_menu(normal_menu if not is_owner else owner_menu)
+    user=random.choice(usernames)
+    pwd=random.choice(passwords)
     for i in range(1,6):
         print(f"Trying username: {user}, password attempt {i}...")
         time.sleep(1)
     print(f"{GREEN}Password cracked! Username: {user}, Password: {pwd}{Fore.RESET}")
     with open("brute.log","a") as f:
-        f.write(f"=== Brute Force Log {datetime.now()} ===\nTarget: {target_name}\nUsername: {user}\nPassword: {pwd}\n")
-    back_to_menu()
-
-def password_generator():
-    print(f"{CYAN}[*] Password Generator Tool{Fore.RESET}")
-    length = input("Enter password length (default 12): ")
-    try:
-        length = int(length)
-    except:
-        length = 12
-    chars = string.ascii_letters + string.digits + "!@#$%^&*()"
-    pwd = "".join(random.choice(chars) for _ in range(length))
-    print(f"{GREEN}Generated Password: {pwd}{Fore.RESET}")
-    back_to_menu()
-
-def quick_connect():
-    networks = generate_wifi_networks()
-    print(f"{CYAN}[*] Available WiFi Networks:{Fore.RESET}")
-    for idx, net in enumerate(networks):
-        print(f"{idx+1}) {net}")
-    target = input(f"\n{YELLOW}Enter the number of the WiFi to connect: {Fore.RESET}")
-    try:
-        target_index = int(target)-1
-        target_name = networks[target_index]
-    except:
-        print(f"{RED}Invalid input!{Fore.RESET}")
-        back_to_menu()
-    print(f"{GREEN}Connecting to {target_name}...{Fore.RESET}")
-    for i in range(3):
-        print(".")
-        time.sleep(0.7)
-    print(f"{GREEN}Connected successfully!{Fore.RESET}")
-    back_to_menu()
+        f.write(f"=== Brute Force Log {datetime.now()} ===\nTarget: {target}\nUsername: {user}\nPassword: {pwd}\n")
+    back_to_menu(normal_menu if not is_owner else owner_menu)
 
 def system_info():
     print(f"{YELLOW}[*] System Info:{Fore.RESET}")
     print(f"OS: {os.name}, User: {os.getenv('USER')}")
     os.system("uname -r")
     os.system("uptime -p")
-    back_to_menu()
+    back_to_menu(normal_menu if not is_owner else owner_menu)
 
-def pro_mode():
-    print(f"{RED}PRO MODE! Press Ctrl+C to stop.{Fore.RESET}")
-    try:
-        while True:
-            print(f"[PRO] {datetime.now()} :: Injecting packets...")
-            time.sleep(0.2)
-    except KeyboardInterrupt:
-        print("Pro Mode stopped.")
-    back_to_menu()
+def owner_change_password():
+    global owner_password
+    owner_password=input("Enter new owner password: ")
+    print(f"{GREEN}Owner password changed!{Fore.RESET}")
+    back_to_menu(owner_menu)
 
-def ddos_attack():
-    target = input("Enter target IP/URL: ")
-    print(f"{YELLOW}Simulating attack on {target}... Ctrl+C to stop{Fore.RESET}")
-    count = 0
-    try:
-        while True:
-            pkt = os.urandom(1)[0]%1500+64
-            port = os.urandom(2)[0]%65535
-            line = f"[ATTACK] Sent {pkt} bytes to {target}:{port} | Total {count}"
-            print(line)
-            with open("ddos.log","a") as f:
-                f.write(line + "\n")
-            count += 1
-            time.sleep(0.1)
-    except KeyboardInterrupt:
-        print("DDoS stopped.")
-    back_to_menu()
+def owner_clear_logs():
+    logs=[f for f in os.listdir() if f.endswith(".log")]
+    for log in logs: os.remove(log)
+    print(f"{GREEN}All logs cleared!{Fore.RESET}")
+    back_to_menu(owner_menu)
 
-def view_logs():
-    logs = [f for f in os.listdir() if f.endswith(".log")]
-    if logs:
-        print(*logs, sep="\n")
-    else:
-        print("No logs found.")
-    back_to_menu()
-
-def menu():
+# ------------------ MENUS ------------------
+def normal_menu():
     banner()
-    print("1) WiFi Scan\n2) Brute Force\n3) Password Generator\n4) Quick Connect\n5) System Info\n6) Pro Mode\n7) DDoS Attack\n8) View Logs\n0) Exit\n")
-    choice = input("Choose: ")
+    print("1) WiFi Scan\n2) Brute Force\n3) System Info\n0) Exit")
+    choice=input(f"{YELLOW}Choose: {Fore.RESET}")
     if choice=="1": wifi_scan()
     elif choice=="2": brute_force()
-    elif choice=="3": password_generator()
-    elif choice=="4": quick_connect()
-    elif choice=="5": system_info()
-    elif choice=="6": pro_mode()
-    elif choice=="7": ddos_attack()
-    elif choice=="8": view_logs()
+    elif choice=="3": system_info()
     elif choice=="0": exit()
-    else: print("Invalid choice!"); time.sleep(1); menu()
+    else: print(f"{RED}Invalid!{Fore.RESET}"); time.sleep(1); normal_menu()
 
-if __name__=="__main__":
-    menu()
+def owner_menu():
+    banner()
+    print("=== OWNER MENU ===")
+    print("1) WiFi Scan\n2) Brute Force\n3) System Info\n4) Change Owner Password\n5) Clear Logs\n0) Exit")
+    choice=input(f"{YELLOW}Choose: {Fore.RESET}")
+    if choice=="1": wifi_scan()
+    elif choice=="2": brute_force()
+    elif choice=="3": system_info()
+    elif choice=="4": owner_change_password()
+    elif choice=="5": owner_clear_logs()
+    elif choice=="0": exit()
+    else: print(f"{RED}Invalid!{Fore.RESET}"); time.sleep(1); owner_menu()
+
+# ------------------ LOGIN ------------------
+is_owner=False
+banner()
+pwd=input(f"{YELLOW}Enter password: {Fore.RESET}")
+if pwd=="freeuser1234": is_owner=False; normal_menu()
+elif pwd==owner_password: is_owner=True; owner_menu()
+else: print(f"{RED}Wrong password!{Fore.RESET}"); time.sleep(2); sys.exit()
