@@ -146,13 +146,6 @@ def quick_connect():
     print(f"{GREEN}Connected!{Fore.RESET}")
     back_to_menu(owner_menu if is_owner else normal_menu)
 
-def view_logs():
-    logs=[f for f in os.listdir() if f.endswith(".log")]
-    if logs: print(*logs,sep="\n")
-    else: print("No logs found.")
-    back_to_menu(owner_menu if is_owner else normal_menu)
-
-# ------------------ OWNER MENU FEATURES ------------------
 def random_hack_simulation():
     targets = ["NASA Mainframe", "Bank Server", "Secret Lab", "CIA Database", "Tech Giant Cloud"]
     actions = ["Injecting virus", "Bypassing firewall", "Decrypting passwords", "Downloading secret files", "Overloading server"]
@@ -165,18 +158,34 @@ def random_hack_simulation():
     print(f"{GREEN}Hack simulation complete! Target: {target}{Fore.RESET}")
     with open("owner_random.log", "a") as f:
         f.write(f"{datetime.now()} :: Hack simulated on {target}\n")
-    back_to_menu(owner_menu)
+    back_to_menu(normal_menu)
 
 def clear_logs():
     logs=[f for f in os.listdir() if f.endswith(".log")]
     for log in logs: os.remove(log)
     print(f"{GREEN}All logs cleared!{Fore.RESET}")
+    back_to_menu(normal_menu)
+
+def owner_only_feature():
+    print(f"{CYAN}[*] Running special owner-only feature...{Fore.RESET}")
+    time.sleep(1)
+    print(f"{GREEN}Feature complete!{Fore.RESET}")
     back_to_menu(owner_menu)
 
 # ------------------ MENUS ------------------
 def normal_menu():
     banner()
-    print("1) WiFi Scan\n2) Brute Force\n3) Password Generator\n4) Quick Connect\n5) System Info\n6) Pro Mode\n7) DDoS Attack\n8) View Logs\n0) Exit")
+    print("=== NORMAL MENU ===")
+    print("1) WiFi Scan")
+    print("2) Brute Force")
+    print("3) Password Generator")
+    print("4) Quick Connect")
+    print("5) System Info")
+    print("6) Pro Mode")
+    print("7) DDoS Attack")
+    print("8) Random Hack Simulation")
+    print("9) Clear Logs")
+    print("0) Exit")
     choice=input(f"{YELLOW}Choose: {Fore.RESET}")
     if choice=="1": wifi_scan()
     elif choice=="2": brute_force()
@@ -185,14 +194,23 @@ def normal_menu():
     elif choice=="5": system_info()
     elif choice=="6": pro_mode()
     elif choice=="7": ddos_attack()
-    elif choice=="8": view_logs()
+    elif choice=="8": random_hack_simulation()
+    elif choice=="9": clear_logs()
     elif choice=="0": exit()
     else: print(f"{RED}Invalid!{Fore.RESET}"); time.sleep(1); normal_menu()
 
 def owner_menu():
     banner()
     print("=== OWNER MENU ===")
-    print("1) WiFi Scan\n2) Brute Force\n3) Password Generator\n4) Quick Connect\n5) System Info\n6) Pro Mode\n7) DDoS Attack\n8) View Logs\n9) Random Hack Simulation\n10) Clear Logs\n0) Exit")
+    print("1) WiFi Scan")
+    print("2) Brute Force")
+    print("3) Password Generator")
+    print("4) Quick Connect")
+    print("5) System Info")
+    print("6) Pro Mode")
+    print("7) DDoS Attack")
+    print("8) Owner")
+    print("0) Exit")
     choice=input(f"{YELLOW}Choose: {Fore.RESET}")
     if choice=="1": wifi_scan()
     elif choice=="2": brute_force()
@@ -201,9 +219,7 @@ def owner_menu():
     elif choice=="5": system_info()
     elif choice=="6": pro_mode()
     elif choice=="7": ddos_attack()
-    elif choice=="8": view_logs()
-    elif choice=="9": random_hack_simulation()
-    elif choice=="10": clear_logs()
+    elif choice=="8": owner_only_feature()
     elif choice=="0": exit()
     else: print(f"{RED}Invalid!{Fore.RESET}"); time.sleep(1); owner_menu()
 
