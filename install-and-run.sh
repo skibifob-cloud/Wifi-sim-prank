@@ -1,25 +1,37 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/bash
+# Clear screen
+clear
 
-# Update packages
-pkg update -y && pkg upgrade -y
+# GitHub repo URL
+REPO_URL="https://github.com/skibifob-cloud/Wifi-sim-prank.git"
+SCRIPT_NAME="run.wificracker.py"
 
-# Install dependencies
-pkg install python -y
-pkg install curl -y
-pip install --upgrade pip
-pip install colorama
+# Install Git if missing
+if ! command -v git &> /dev/null; then
+    echo "[!] Git not found. Installing..."
+    pkg install git -y
+fi
 
-# Create bin folder
-mkdir -p $HOME/bin
+# Install Python3 if missing
+if ! command -v python3 &> /dev/null; then
+    echo "[!] Python3 not found. Installing..."
+    pkg install python -y
+fi
 
-# Download the WiFi Cracker Python script
-curl -s -O https://raw.githubusercontent.com/skibifob-cloud/Wifi-sim-prank/main/run.wificracker
-mv run.wificracker $HOME/bin/
-chmod +x $HOME/bin/run.wificracker
+# Clone repo or pull latest
+if [ ! -d "Wifi-sim-prank" ]; then
+    echo "[*] Cloning repository..."
+    git clone $REPO_URL
+else
+    echo "[*] Repository exists. Pulling latest version..."
+    cd Wifi-sim-prank
+    git pull
+    cd ..
+fi
 
-# Add $HOME/bin to PATH if not already
-grep -qxF 'export PATH=$HOME/bin:$PATH' ~/.bashrc || echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
-source ~/.bashrc
+# Make Python script executable
+chmod +x Wifi-sim-prank/$SCRIPT_NAME
 
-# Run the WiFi Cracker
-$HOME/bin/run.wificracker
+# Run the script
+echo "[*] Running Hacking Tools..."
+python3 Wifi-sim-prank/$SCRIPT_NAME
